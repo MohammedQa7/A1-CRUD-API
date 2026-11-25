@@ -97,4 +97,5 @@ Output:
 
 ## Swagger UI
 
-![Swagger UI showing the Task API endpoints](<img width="1253" height="820" alt="Screenshot 2026-11-25 at 6 21 50 PM" src="https://github.com/user-attachments/assets/d8c83ebd-e426-4be5-94ba-01c0f5104098" />)
+![Swagger UI showing the Task API endpoints]
+<img width="1253" height="820" alt="Screenshot 2026-11-25 at 6 21 50 PM" src="https://github.com/user-attachments/assets/d8c83ebd-e426-4be5-94ba-01c0f5104098" />
