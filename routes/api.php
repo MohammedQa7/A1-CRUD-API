@@ -78,3 +78,64 @@ Route::post('/tasks', function (Request $request) use ($defaultTasks) {
 
     return response()->json($task, 201);
 });
+
+
+// PUT /tasks/{id} - update title and/or done
+Route::put('/tasks/{id}', function (Request $request, string $id) use ($defaultTasks) {
+    $tasks = Cache::store('file')->get('tasks', $defaultTasks);
+
+    $index = collect($tasks)->search(fn ($task) => (string) $task['id'] === $id);
+
+    // Use === false, because index 0 is a valid result
+    if ($index === false) {
+        return response()->json(['error' => "Task {$id} not found"], 404);
+    }
+
+    $data = $request->json()->all();
+
+    if (!array_key_exists('title', $data) && !array_key_exists('done', $data)) {
+        return response()->json([
+            'error' => 'Send a JSON body with title and/or done',
+        ], 400);
+    }
+
+    if (array_key_exists('title', $data)) {
+        if (!is_string($data['title']) || trim($data['title']) === '') {
+            return response()->json([
+                'error' => 'Title must be a non-empty string',
+            ], 400);
+        }
+
+        $tasks[$index]['title'] = trim($data['title']);
+    }
+
+    if (array_key_exists('done', $data)) {
+        if (!is_bool($data['done'])) {
+            return response()->json(['error' => 'Done must be true or false'], 400);
+        }
+
+        $tasks[$index]['done'] = $data['done'];
+    }
+
+    // Save only after all validation has passed
+    Cache::store('file')->forever('tasks', $tasks);
+
+    return response()->json($tasks[$index]);
+});
+
+// DELETE /tasks/{id} - remove a task
+Route::delete('/tasks/{id}', function (string $id) use ($defaultTasks) {
+    $tasks = Cache::store('file')->get('tasks', $defaultTasks);
+
+    $index = collect($tasks)->search(fn ($task) => (string) $task['id'] === $id);
+
+    if ($index === false) {
+        return response()->json(['error' => "Task {$id} not found"], 404);
+    }
+
+    // Remove the task and reindex, so GET /tasks still returns a JSON array
+    array_splice($tasks, $index, 1);
+    Cache::store('file')->forever('tasks', $tasks);
+
+    return response()->noContent(); // 204
+});
