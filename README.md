@@ -4,7 +4,7 @@ Tasks are kept in Laravel's `file` cache store, so changes remain after a server
 
 ## Getting Started
 
-You need PHP and Composer. Run these commands from the project folder (macOS, Linux or Git Bash).
+You need PHP and Composer. Run these commands from the project folder.
 
 Install dependencies:
 
