@@ -15,7 +15,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/hi', function () {
+Route::get('/', function () {
     return response()->json([
         'status' => '200',
         'message' => 'Hello world',
@@ -84,7 +84,7 @@ Route::post('/tasks', function (Request $request) use ($defaultTasks) {
 Route::put('/tasks/{id}', function (Request $request, string $id) use ($defaultTasks) {
     $tasks = Cache::store('file')->get('tasks', $defaultTasks);
 
-    $index = collect($tasks)->search(fn ($task) => (string) $task['id'] === $id);
+    $index = collect($tasks)->search(fn($task) => (string) $task['id'] === $id);
 
     // Use === false, because index 0 is a valid result
     if ($index === false) {
@@ -127,7 +127,7 @@ Route::put('/tasks/{id}', function (Request $request, string $id) use ($defaultT
 Route::delete('/tasks/{id}', function (string $id) use ($defaultTasks) {
     $tasks = Cache::store('file')->get('tasks', $defaultTasks);
 
-    $index = collect($tasks)->search(fn ($task) => (string) $task['id'] === $id);
+    $index = collect($tasks)->search(fn($task) => (string) $task['id'] === $id);
 
     if ($index === false) {
         return response()->json(['error' => "Task {$id} not found"], 404);
